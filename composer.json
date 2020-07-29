@@ -1,0 +1,21 @@
+{
+  "name": "fortifi/fid",
+  "description": "Context",
+  "license": "BSD-3-Clause",
+  "require": {
+    "php": "~7.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Fortifi\\Fid\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Fortifi\\Fid\\Tests\\": "tests/"
+    }
+  }
+}
