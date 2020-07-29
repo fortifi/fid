@@ -136,15 +136,6 @@ class Fid
     return static::isFid($fid, true) && static::getFullType($fid) == $fullType;
   }
 
-  public static function compressForUrl($fid, $stripTypes = true)
-  {
-    $compressed = static::compress($fid, $stripTypes);
-    $exploded = explode('-', $compressed);
-    $unique = array_pop($exploded);
-    array_push($exploded, strtolower(base_convert(bin2hex($unique), 16, 36)));
-    return implode('-', $exploded);
-  }
-
   public static function compress($fid, $stripTypes = true)
   {
     $parts = explode(':', $fid);
@@ -172,14 +163,6 @@ class Fid
     return implode('-', $compressed);
   }
 
-  public static function expandFromUrl($compressedFid, $type = null, $subType = null, $preferCompressedType = true)
-  {
-    $exploded = explode('-', $compressedFid);
-    $unique = array_pop($exploded);
-    array_push($exploded, hex2bin(base_convert($unique, 36, 16)));
-    return static::expand(implode('-', $exploded), $type, $subType, $preferCompressedType);
-  }
-
   public static function expand($compressedFid, $type = null, $subType = null, $preferCompressedType = true)
   {
     $parts = explode('-', $compressedFid);
@@ -199,6 +182,30 @@ class Fid
     }
 
     return 'FID:' . $type . ($subType !== $type ? ':' . $subType : '') . ':' . $time . ':' . $unique;
+  }
+
+  public static function compressForUrl($fid, $stripTypes = true)
+  {
+    $compressed = static::compress($fid, $stripTypes);
+    $exploded = explode('-', $compressed);
+    $unique = array_pop($exploded);
+    foreach(str_split($unique, 8) as $un)
+    {
+      array_push($exploded, strtolower(base_convert(bin2hex($un), 16, 36)));
+    }
+    return implode('-', $exploded);
+  }
+
+  public static function expandFromUrl($compressedFid, $type = null, $subType = null, $preferCompressedType = true)
+  {
+    $exploded = explode('-', $compressedFid);
+    $time = array_shift($exploded);
+    $unique = '';
+    foreach($exploded as $part)
+    {
+      $unique .= hex2bin(base_convert($part, 36, 16));
+    }
+    return static::expand($time . '-' . $unique, $type, $subType, $preferCompressedType);
   }
 
 }
