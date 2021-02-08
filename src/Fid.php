@@ -196,16 +196,13 @@ class Fid
     return implode('-', $exploded);
   }
 
-  public static function expandFromUrl($compressedFid, $type = null, $subType = null, $preferCompressedType = true)
+  public static function expandFromUrl($compressedFid, $type = null, $subType = null, $preferCompressed = true)
   {
     $exploded = explode('-', $compressedFid);
-    $time = array_shift($exploded);
-    $unique = '';
-    foreach($exploded as $part)
-    {
-      $unique .= hex2bin(base_convert($part, 36, 16));
-    }
-    return static::expand($time . '-' . $unique, $type, $subType, $preferCompressedType);
+    $unique = array_pop($exploded);
+    $time = array_pop($exploded);
+    $unique = hex2bin(base_convert($unique, 36, 16));
+    return static::expand(implode('-', array_merge($exploded, [$time, $unique])), $type, $subType, $preferCompressed);
   }
 
 }
