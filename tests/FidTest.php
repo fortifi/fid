@@ -96,7 +96,6 @@ class FidTest extends TestCase
     static::assertEquals('PCHS-SUBS-q4811j-9cemohx3rec', $compressed);
 
     $expanded = Fid::expandFromUrl($compressed);
-    var_dump($expanded);
     static::assertEquals($initialFid, $expanded);
 
     $expanded = Fid::expandFromUrl($compressed, 'PCHS', 'SUBS');
